@@ -1,7 +1,7 @@
 "use client";
 import { MusicTrack } from "@/types";
 import { extname } from "path";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 
 const audio_formats = [
@@ -74,7 +74,6 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
 
     useEffect(() => {
         if (mediaElement) {
-            console.log("mediaElement is true");
             if (mediaElement.readyState >= 1) {
                 setIsLoaded(true);
             }
@@ -151,7 +150,9 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
     }
     return (
         <div>
-            {element}
+            {useMemo(() => {
+                return element;
+            }, [])}
             <div id="playBar">
                 <Image
                     src={"/-10_seconds.svg"}
