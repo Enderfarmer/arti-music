@@ -57,6 +57,7 @@ const video_formats = [
 const MediaElement = ({ track }: { track: MusicTrack }) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const timeControlRef = useRef<HTMLInputElement | null>(null);
     const [operation, setOperation] = useState<null | Function>(null);
     const [mediaElement, setMediaElement] = useState<
         HTMLAudioElement | HTMLVideoElement | null
@@ -154,32 +155,56 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
                 return element;
             }, [])}
             <div id="playBar">
-                <Image
-                    src={"/-10_seconds.svg"}
-                    alt="Ten seconds back"
-                    width={30}
-                    height={30}
-                    className="inline"
-                    onClick={handleMinusButtonClick}
-                    title="Ten seconds back"
-                />
-                <Image
-                    src="/play.svg"
-                    alt="Play media"
-                    onClick={handlePlayButtonClick}
-                    id="playMedia"
-                    width={30}
-                    height={30}
-                    className="inline"
-                />
-                <Image
-                    src={"/+10_seconds.svg"}
-                    alt="Skip ten seconds"
-                    width={30}
-                    height={30}
-                    className="inline"
-                    onClick={handlePlusButtonClick}
-                />
+                {mediaElement ? (
+                    <input
+                        type="range"
+                        id="video-control"
+                        max={mediaElement.duration / 2}
+                        style={{ width: "90%" }}
+                        onChange={function (e) {
+                            setOperation(function () {
+                                if (timeControlRef.current) {
+                                    if (mediaElement)
+                                        mediaElement.currentTime =
+                                            parseInt(
+                                                timeControlRef.current.value
+                                            ) * 2;
+                                }
+                            });
+                        }}
+                        ref={timeControlRef}
+                    />
+                ) : (
+                    <input type="range" disabled />
+                )}
+                <div className="flex justify-center">
+                    <Image
+                        src={"/-10_seconds.svg"}
+                        alt="Ten seconds back"
+                        width={30}
+                        height={30}
+                        className="inline"
+                        onClick={handleMinusButtonClick}
+                        title="Ten seconds back"
+                    />
+                    <Image
+                        src="/play.svg"
+                        alt="Play media"
+                        onClick={handlePlayButtonClick}
+                        id="playMedia"
+                        width={30}
+                        height={30}
+                        className="inline"
+                    />
+                    <Image
+                        src={"/+10_seconds.svg"}
+                        alt="Skip ten seconds"
+                        width={30}
+                        height={30}
+                        className="inline"
+                        onClick={handlePlusButtonClick}
+                    />
+                </div>
             </div>
         </div>
     );
