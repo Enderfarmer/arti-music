@@ -1,9 +1,9 @@
 import Image from "next/image";
 
-const TopNavBar = ({}) => {
+const TopNavBar = () => {
     return (
         <nav
-            className="flex bg-gray-900"
+            className="flex bg-gray-900 absolute top-0 w-full"
             style={{ justifyContent: "space-between" }}
         >
             <span className="brand font-bold m-4 p-1 text-xl">
