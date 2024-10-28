@@ -1,131 +1,75 @@
 "use client";
 import { MusicTrack } from "@/types";
 import { extname } from "path";
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 
-const audio_formats = [
-    // Audioformate
-    "aac",
-    "ac3",
-    "aif",
-    "aifc",
-    "aiff",
-    "amr",
-    "au",
-    "caf",
-    "flac",
-    "m4a",
-    "m4b",
-    "mp3",
-    "oga",
-    "voc",
-    "wav",
-    "weba",
-    "wma",
-];
-const video_formats = [
-    // Videoformate
-    "3g2",
-    "3gp",
-    "3gpp",
-    "avi",
-    "cavs",
-    "dv",
-    "dvr",
-    "flv",
-    "m2ts",
-    "m4v",
-    "mkv",
-    "mod",
-    "mov",
-    "mp4",
-    "mpeg",
-    "mpg",
-    "mts",
-    "mxf",
-    "ogg",
-    "rm",
-    "rmvb",
-    "swf",
-    "vob",
-    "webm",
-    "wmv",
-    "wtv",
-];
+const audio_formats = ["aac", "mp3", "wav", "m4a"]; // Beispiel-Audioformate
+const video_formats = ["mp4", "avi", "mov", "webm"]; // Beispiel-Videoformate
 
 const MediaElement = ({ track }: { track: MusicTrack }) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const timeControlRef = useRef<HTMLInputElement | null>(null);
-    const [operation, setOperation] = useState<null | Function>(null);
     const [mediaElement, setMediaElement] = useState<
         HTMLAudioElement | HTMLVideoElement | null
     >(null);
+    const [currentTime, setCurrentTime] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
 
     useEffect(() => {
-        // Set the correct media element after the component mounts
         if (audioRef.current) {
             setMediaElement(audioRef.current);
         } else if (videoRef.current) {
             setMediaElement(videoRef.current);
         }
-    }, []); // The effect runs once after the initial render
+    }, []);
 
     useEffect(() => {
         if (mediaElement) {
-            if (mediaElement.readyState >= 1) {
-                setIsLoaded(true);
-            }
+            mediaElement.ontimeupdate = () =>
+                setCurrentTime(mediaElement.currentTime);
+            mediaElement.onloadedmetadata = () => setIsLoaded(true);
+            mediaElement.onplay = () => setIsPlaying(true);
+            mediaElement.onpause = () => setIsPlaying(false);
         }
     }, [mediaElement]);
 
-    // Handle the loaded metadata to set the media element as ready
-    const handleLoadedMetadata = () => {
-        setIsLoaded(true);
-    };
-
-    // Handle the plus button click to move the currentTime forward
-    const handlePlusButtonClick = (e: React.MouseEvent) => {
-        console.log(isLoaded);
-        if (mediaElement && isLoaded) {
-            setOperation(function () {
-                mediaElement.currentTime += 10;
-            });
-        }
-    };
-    const handlePlayButtonClick = (e: React.MouseEvent) => {
+    const handlePlayButtonClick = () => {
         if (mediaElement) {
-            if (mediaElement.paused) {
-                mediaElement.play();
-                e.currentTarget.setAttribute("src", "/pause.svg");
-                e.currentTarget.setAttribute("alt", "Pause");
-            } else {
-                e.currentTarget.setAttribute("src", "/play.svg");
-                e.currentTarget.setAttribute("alt", "play");
+            if (isPlaying) {
                 mediaElement.pause();
+            } else {
+                mediaElement.play();
             }
         }
     };
-    const handleMinusButtonClick = (e: React.MouseEvent) => {
+
+    const handlePlusButtonClick = () => {
         if (mediaElement) {
-            setOperation(function () {
-                mediaElement.currentTime -= 10;
-            });
+            mediaElement.currentTime += 10;
         }
     };
+
+    const handleMinusButtonClick = () => {
+        if (mediaElement) {
+            mediaElement.currentTime -= 10;
+        }
+    };
+
+    const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTime = parseFloat(e.target.value);
+        if (mediaElement) {
+            mediaElement.currentTime = newTime;
+            setCurrentTime(newTime);
+        }
+    };
+
     const element = audio_formats.includes(
         extname(track.music_file).slice(1)
     ) ? (
         <>
-            <audio
-                src={track.music_file}
-                controls
-                hidden
-                ref={audioRef}
-                onLoadedMetadata={handleLoadedMetadata}
-            ></audio>
+            <audio src={track.music_file} ref={audioRef}></audio>
             <img src={track.image} alt="Track image" height={200} />
         </>
     ) : video_formats.includes(extname(track.music_file).slice(1)) ? (
@@ -133,46 +77,29 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
             src={track.music_file}
             poster={track.image}
             ref={videoRef}
-            onLoadedMetadata={handleLoadedMetadata}
         ></video>
     ) : (
         "Unknown media format"
     );
-    if (mediaElement) {
-        mediaElement.onended = function () {
-            document
-                .getElementById("playMedia")
-                ?.setAttribute("src", "/play.svg");
-        };
-        mediaElement.oncanplay = () => {
-            if (typeof operation == "function") operation();
-            setOperation(null);
-        };
-    }
+
     return (
         <div>
-            {useMemo(() => {
-                return element;
-            }, [])}
+            {element}
+            <div className="font-bold text-xl m-1 text-center">
+                {track.name}{" "}
+                <span className="font-medium text-xs">by {track.author}</span>
+            </div>
+
             <div id="playBar">
-                {mediaElement ? (
+                {mediaElement && isLoaded ? (
                     <input
                         type="range"
-                        id="video-control"
-                        max={mediaElement.duration / 2}
+                        min="0"
+                        max={mediaElement.duration}
+                        step="0.1"
+                        value={currentTime}
+                        onChange={handleSliderChange}
                         style={{ width: "90%" }}
-                        onChange={function (e) {
-                            setOperation(function () {
-                                if (timeControlRef.current) {
-                                    if (mediaElement)
-                                        mediaElement.currentTime =
-                                            parseInt(
-                                                timeControlRef.current.value
-                                            ) * 2;
-                                }
-                            });
-                        }}
-                        ref={timeControlRef}
                     />
                 ) : (
                     <input type="range" disabled />
@@ -183,25 +110,22 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
                         alt="Ten seconds back"
                         width={30}
                         height={30}
-                        className="inline"
                         onClick={handleMinusButtonClick}
                         title="Ten seconds back"
                     />
                     <Image
-                        src="/play.svg"
+                        src={isPlaying ? "/pause.svg" : "/play.svg"}
                         alt="Play media"
                         onClick={handlePlayButtonClick}
-                        id="playMedia"
                         width={30}
                         height={30}
-                        className="inline"
                     />
                     <Image
                         src={"/+10_seconds.svg"}
                         alt="Skip ten seconds"
                         width={30}
                         height={30}
-                        className="inline"
+                        // className="inline"
                         onClick={handlePlusButtonClick}
                     />
                 </div>
