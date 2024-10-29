@@ -107,11 +107,19 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
                             {(mediaElement.currentTime -
                                 (mediaElement.currentTime % 60)) /
                                 60}
-                            :{Math.round(mediaElement.currentTime % 60)}/
+                            :
+                            {Math.round(mediaElement.currentTime % 60) < 10
+                                ? "0" +
+                                  Math.round(mediaElement.currentTime % 60)
+                                : Math.round(mediaElement.currentTime % 60)}
+                            /
                             {(mediaElement.duration -
                                 (mediaElement.duration % 60)) /
                                 60}
-                            :{Math.round(mediaElement.duration % 60)}
+                            :
+                            {Math.round(mediaElement.duration % 60) < 10
+                                ? "0" + Math.round(mediaElement.duration % 60)
+                                : Math.round(mediaElement.duration % 60)}
                         </span>
                     </div>
                 ) : (
