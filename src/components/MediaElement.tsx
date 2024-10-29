@@ -90,17 +90,30 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
                 <span className="font-medium text-xs">by {track.author}</span>
             </div>
 
-            <div id="playBar">
+            <div id="playBar" className="min-w-60">
                 {mediaElement && isLoaded ? (
-                    <input
-                        type="range"
-                        min="0"
-                        max={mediaElement.duration}
-                        step="0.1"
-                        value={currentTime}
-                        onChange={handleSliderChange}
-                        style={{ width: "90%" }}
-                    />
+                    <div>
+                        <input
+                            type="range"
+                            min="0"
+                            max={mediaElement.duration}
+                            step="0.1"
+                            value={currentTime}
+                            onChange={handleSliderChange}
+                            style={{ width: "90%" }}
+                        />
+                        <br />
+                        <span>
+                            {(mediaElement.currentTime -
+                                (mediaElement.currentTime % 60)) /
+                                60}
+                            :{Math.round(mediaElement.currentTime % 60)}/
+                            {(mediaElement.duration -
+                                (mediaElement.duration % 60)) /
+                                60}
+                            :{Math.round(mediaElement.duration % 60)}
+                        </span>
+                    </div>
                 ) : (
                     <input type="range" disabled />
                 )}
