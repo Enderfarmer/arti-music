@@ -6,5 +6,6 @@ export interface MusicTrack {
     author: number;
     description: string;
     id: number;
+    channel: string;
 }
 export type MusicTrackList = MusicTrack[];
