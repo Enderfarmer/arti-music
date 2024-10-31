@@ -1,20 +1,32 @@
 import { MusicTrackList } from "@/types";
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
+
 import { CgClose } from "react-icons/cg";
 
 const SearchBar = ({
     tracks,
-    hideMode,
+    shownMode,
+    values,
 }: {
     tracks?: MusicTrackList;
-    hideMode?: boolean;
+    shownMode?: boolean;
+    values?: ["name" | "year" | "channel", string];
 }) => {
     const [barHidden, setBarHidden] = useState(true);
     const [searchFor, setSearchFor] = useState("name");
+
+    useEffect(() => {
+        if (values) {
+            setSearchFor(values[0]);
+        }
+    }, [values]);
+
+    values && console.log("values: ", values[0] === "channel");
+
     return (
         <span>
-            {!barHidden || hideMode ? (
+            {!barHidden || shownMode ? (
                 <>
                     Search for:{" "}
                     <form action="/search" method="get" className="inline">
@@ -25,33 +37,52 @@ const SearchBar = ({
                                 setSearchFor(e.currentTarget.value);
                             }}
                             name="type"
+                            value={searchFor} // Direktes Binden des Wertes
                         >
-                            <option value="name" defaultChecked>
-                                Name
-                            </option>
-                            <option value="author">Author</option>
-                            <option value="year">Year of publishing</option>
+                            {shownMode && values ? (
+                                <>
+                                    <option value="name">Name</option>
+                                    <option value="channel">
+                                        Author channel
+                                    </option>
+                                    <option value="year">
+                                        Year of publishing
+                                    </option>
+                                </>
+                            ) : (
+                                <>
+                                    <option value="name">Name</option>
+                                    <option value="channel">
+                                        Author channel
+                                    </option>
+                                    <option value="year">
+                                        Year of publishing
+                                    </option>
+                                </>
+                            )}
                         </select>
                         <input
-                            type={searchFor !== "date" ? "text" : "number"}
+                            type={searchFor !== "year" ? "text" : "number"}
                             list="trackdatalist"
                             className="bg-black"
                             name="q"
+                            defaultValue={values && values[1]}
                         />
                     </form>
                     {tracks && searchFor !== "year" ? (
                         <datalist id="trackdatalist">
-                            {tracks.map((track) => {
-                                return (
-                                    <option
-                                        value={
-                                            searchFor == "name"
-                                                ? track.name
-                                                : track.author
-                                        }
-                                        key={track.id}
-                                    ></option>
-                                );
+                            {tracks.map((track, index) => {
+                                if (index < 7)
+                                    return (
+                                        <option
+                                            value={
+                                                searchFor === "name"
+                                                    ? track.name
+                                                    : track.author
+                                            }
+                                            key={track.id}
+                                        ></option>
+                                    );
                             })}
                         </datalist>
                     ) : (
@@ -61,7 +92,7 @@ const SearchBar = ({
             ) : (
                 ""
             )}
-            {!hideMode &&
+            {!shownMode &&
                 (barHidden ? (
                     <Image
                         src={"/search.svg"}
@@ -69,15 +100,11 @@ const SearchBar = ({
                         width="30"
                         height="30"
                         className="inline m-3"
-                        onClick={function () {
-                            setBarHidden(!barHidden);
-                        }}
+                        onClick={() => setBarHidden(!barHidden)}
                     />
                 ) : (
                     <CgClose
-                        onClick={function () {
-                            setBarHidden(!barHidden);
-                        }}
+                        onClick={() => setBarHidden(!barHidden)}
                         className="inline"
                         size={"2em"}
                     />
