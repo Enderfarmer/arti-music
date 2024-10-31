@@ -3,32 +3,42 @@ import Image from "next/image";
 import { ChangeEvent, useState } from "react";
 import { CgClose } from "react-icons/cg";
 
-const SearchBar = ({ tracks }: { tracks?: MusicTrackList }) => {
+const SearchBar = ({
+    tracks,
+    hideMode,
+}: {
+    tracks?: MusicTrackList;
+    hideMode?: boolean;
+}) => {
     const [barHidden, setBarHidden] = useState(true);
     const [searchFor, setSearchFor] = useState("name");
     return (
         <span>
-            {!barHidden && (
+            {!barHidden || hideMode ? (
                 <>
                     Search for:{" "}
-                    <select
-                        id="search-for"
-                        className="bg-black"
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                            setSearchFor(e.currentTarget.value);
-                        }}
-                    >
-                        <option value="name" defaultChecked>
-                            Name
-                        </option>
-                        <option value="author">Author</option>
-                        <option value="year">Year of publishing</option>
-                    </select>
-                    <input
-                        type={searchFor !== "date" ? "text" : "number"}
-                        list="trackdatalist"
-                        className="bg-black"
-                    />
+                    <form action="/search" method="get" className="inline">
+                        <select
+                            id="search-for"
+                            className="bg-black"
+                            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                setSearchFor(e.currentTarget.value);
+                            }}
+                            name="type"
+                        >
+                            <option value="name" defaultChecked>
+                                Name
+                            </option>
+                            <option value="author">Author</option>
+                            <option value="year">Year of publishing</option>
+                        </select>
+                        <input
+                            type={searchFor !== "date" ? "text" : "number"}
+                            list="trackdatalist"
+                            className="bg-black"
+                            name="q"
+                        />
+                    </form>
                     {tracks && searchFor !== "year" ? (
                         <datalist id="trackdatalist">
                             {tracks.map((track) => {
@@ -48,27 +58,30 @@ const SearchBar = ({ tracks }: { tracks?: MusicTrackList }) => {
                         ""
                     )}
                 </>
-            )}
-            {barHidden ? (
-                <Image
-                    src={"/search.svg"}
-                    alt={"Search"}
-                    width="30"
-                    height="30"
-                    className="inline m-3"
-                    onClick={function () {
-                        setBarHidden(!barHidden);
-                    }}
-                />
             ) : (
-                <CgClose
-                    onClick={function () {
-                        setBarHidden(!barHidden);
-                    }}
-                    className="inline"
-                    size={"2em"}
-                />
+                ""
             )}
+            {!hideMode &&
+                (barHidden ? (
+                    <Image
+                        src={"/search.svg"}
+                        alt={"Search"}
+                        width="30"
+                        height="30"
+                        className="inline m-3"
+                        onClick={function () {
+                            setBarHidden(!barHidden);
+                        }}
+                    />
+                ) : (
+                    <CgClose
+                        onClick={function () {
+                            setBarHidden(!barHidden);
+                        }}
+                        className="inline"
+                        size={"2em"}
+                    />
+                ))}
         </span>
     );
 };
