@@ -3,6 +3,8 @@ import SearchBar from "@/components/SearchBar";
 import { MusicTrackList } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 const Search = ({}) => {
     const params = useSearchParams();
@@ -32,14 +34,45 @@ const Search = ({}) => {
         if (data)
             setContent(
                 <main>
-                    <SearchBar
-                        shownMode
-                        values={[
-                            params.get("type") as "channel" | "name" | "year",
-                            params.get("q") as string,
-                        ]}
-                    />
-                    {data && data.length ? data[0].name : "no results"}
+                    <div className="absolute top-3">
+                        <SearchBar
+                            shownMode
+                            values={[
+                                params.get("type") as
+                                    | "channel"
+                                    | "name"
+                                    | "year",
+                                params.get("q") as string,
+                            ]}
+                        />
+                    </div>
+                    {data && data.length ? data.length : "No"} results found
+                    {data && data.length
+                        ? data.map((track) => {
+                              return (
+                                  <div key={track.id} className="m-3">
+                                      <Link
+                                          href={"/tracks/".concat(
+                                              track.id.toString()
+                                          )}
+                                      >
+                                          <img
+                                              src={"http://127.0.0.1:8000".concat(
+                                                  track.image
+                                              )}
+                                              alt=""
+                                              width={"10%"}
+                                              loading="lazy"
+                                              className="inline"
+                                          />
+                                          <span className="text-lg ml-3">
+                                              {track.name}
+                                          </span>
+                                      </Link>
+                                  </div>
+                              );
+                          })
+                        : ""}
                 </main>
             );
     }, [data]);

@@ -87,7 +87,7 @@ const MediaElement = ({ track }: { track: MusicTrack }) => {
             {element}
             <div className="font-bold text-xl m-1 text-center">
                 {track.name}{" "}
-                <span className="font-medium text-xs">by {track.author}</span>
+                <span className="font-medium text-xs">by {track.channel}</span>
             </div>
 
             <div id="playBar" className="min-w-60">

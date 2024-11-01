@@ -3,7 +3,6 @@ export interface MusicTrack {
     created_at: Date;
     music_file: string;
     image: string;
-    author: number;
     description: string;
     id: number;
     channel: string;

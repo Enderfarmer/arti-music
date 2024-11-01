@@ -1,16 +1,10 @@
 import Image from "next/image";
-import api from "@/api";
-import { MusicTrackList } from "@/types";
 import TopNavBar from "@/components/TopNavBar";
 import Link from "next/link";
 import { Metadata } from "next";
 import { useTracks } from "@/context";
 
-export const generateMetadata = async ({
-    params,
-}: {
-    params: MusicTrackList;
-}): Promise<Metadata> => {
+export const generateMetadata = async (): Promise<Metadata> => {
     return {
         title: "Home",
         description: "Arti's Music Player home page",
@@ -23,10 +17,10 @@ export default function Home() {
         <main>
             <TopNavBar />
             <section className="flex justify-center">
-                <div
-                // style={{ maxWidth: "60%" }}
-                >
-                    <span className="font-bold mt-10">Neue Ideen</span>
+                <div>
+                    <span className="font-bold" style={{ marginTop: "15vh" }}>
+                        Neue Ideen
+                    </span>
                     <div className="columns-2" style={{ columnGap: "150px" }}>
                         {data.map((track, index) => {
                             if (index < 17) {

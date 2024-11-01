@@ -6,7 +6,7 @@ const TopNavBar = () => {
     return (
         <nav
             className="flex bg-gray-900 absolute top-0 w-full"
-            style={{ justifyContent: "space-between" }}
+            style={{ justifyContent: "space-between", maxHeight: "10vh" }}
         >
             <Link className="brand font-bold m-4 p-1 text-xl inline" href="/">
                 <span className="text-indigo-700 font-extrabold mr-1">

@@ -73,7 +73,7 @@ const SearchBar = ({
                                             value={
                                                 searchFor === "name"
                                                     ? track.name
-                                                    : track.author
+                                                    : track.channel
                                             }
                                             key={track.id}
                                         ></option>
