@@ -27,7 +27,7 @@ const SearchBar = ({
                     <form action="/search" method="get" className="inline">
                         <select
                             id="search-for"
-                            className="bg-black"
+                            className="bg-black outline outline-1 outline-white p-1 rounded-sm"
                             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                 setSearchFor(e.currentTarget.value);
                             }}
@@ -59,7 +59,8 @@ const SearchBar = ({
                         <input
                             type={searchFor !== "year" ? "text" : "number"}
                             list="trackdatalist"
-                            className="bg-black"
+                            className="bg-black outline-1 outline-gray-100 outline w-80 m-1 rounded-lg p-1"
+                            placeholder="Search..."
                             name="q"
                             defaultValue={values && values[1]}
                         />

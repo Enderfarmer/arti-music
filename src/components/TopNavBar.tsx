@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 const TopNavBar = () => {
     return (
         <nav
-            className="flex bg-gray-900 absolute top-0 w-full"
+            className="flex bg-gray-900 absolute top-0 w-full border-b-violet-300 border-b-2"
             style={{ justifyContent: "space-between", maxHeight: "10vh" }}
         >
             <Link className="brand font-bold m-4 p-1 text-xl inline" href="/">
