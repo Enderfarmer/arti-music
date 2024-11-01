@@ -2,6 +2,7 @@
 import api from "@/api";
 import MediaElement from "@/components/MediaElement";
 import TopNavBar from "@/components/TopNavBar";
+import { useTracks } from "@/context";
 import { MusicTrack, MusicTrackList } from "@/types";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -11,7 +12,6 @@ const Id: NextPage = () => {
     const [data, setData] = useState<MusicTrack | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [tracks, setTracks] = useState<undefined | MusicTrackList>(undefined);
     const router = useRouter();
 
     useEffect(() => {
@@ -20,17 +20,14 @@ const Id: NextPage = () => {
                 .then((res) => {
                     const trackData = JSON.parse(res.data);
                     setData(trackData);
-                    setLoading(false); // Erst wenn Daten erfolgreich geladen wurden
+                    // Erst wenn Daten erfolgreich geladen wurden
                 })
                 .catch((err) => {
                     console.error(err);
                     setError("Error fetching data");
-                    setLoading(false);
                 })
                 .finally(() => {
-                    api.get("music-tracks").then((res) => {
-                        setTracks(JSON.parse(res.data));
-                    });
+                    setLoading(false);
                 });
         }
     }, [router.query.id]);
@@ -39,7 +36,7 @@ const Id: NextPage = () => {
     if (error) return <div>{error}</div>;
     return (
         <main className="flex items-center justify-center pt-5">
-            <TopNavBar tracks={tracks} />
+            <TopNavBar />
             <button className="absolute right-10 top-20">
                 <CgClose className="text-red-600" />
             </button>

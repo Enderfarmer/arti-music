@@ -1,28 +1,23 @@
-import { MusicTrackList } from "@/types";
+import { useTracks } from "@/context";
 import Image from "next/image";
 import { ChangeEvent, useState, useEffect } from "react";
-
 import { CgClose } from "react-icons/cg";
 
 const SearchBar = ({
-    tracks,
     shownMode,
     values,
 }: {
-    tracks?: MusicTrackList;
     shownMode?: boolean;
     values?: ["name" | "year" | "channel", string];
 }) => {
     const [barHidden, setBarHidden] = useState(true);
     const [searchFor, setSearchFor] = useState("name");
-
+    const tracks = useTracks();
     useEffect(() => {
         if (values) {
             setSearchFor(values[0]);
         }
     }, [values]);
-
-    values && console.log("values: ", values[0] === "channel");
 
     return (
         <span>

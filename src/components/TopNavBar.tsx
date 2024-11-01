@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
-import { MusicTrackList } from "@/types";
 
-const TopNavBar = ({ tracks }: { tracks?: MusicTrackList }) => {
+const TopNavBar = () => {
     return (
         <nav
             className="flex bg-gray-900 absolute top-0 w-full"
@@ -16,7 +15,7 @@ const TopNavBar = ({ tracks }: { tracks?: MusicTrackList }) => {
                 Music
             </Link>
             <span>
-                <SearchBar tracks={tracks} />
+                <SearchBar />
                 <Image
                     src={"/user-icon.svg"}
                     alt=""

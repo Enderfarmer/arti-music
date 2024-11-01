@@ -1,35 +1,10 @@
 import Image from "next/image";
-import localFont from "next/font/local";
 import api from "@/api";
 import { MusicTrackList } from "@/types";
-import { extname } from "path";
 import TopNavBar from "@/components/TopNavBar";
 import Link from "next/link";
 import { Metadata } from "next";
-
-const geistSans = localFont({
-    src: "./fonts/GeistVF.woff",
-    variable: "--font-geist-sans",
-    weight: "100 900",
-});
-const geistMono = localFont({
-    src: "./fonts/GeistMonoVF.woff",
-    variable: "--font-geist-mono",
-    weight: "100 900",
-});
-
-export const getServerSideProps = async () => {
-    const res = await api.get("music-tracks/");
-    if (res.status !== 200) {
-        return {
-            props: { data: [] },
-        };
-    }
-    const data = JSON.parse(res.data);
-    return {
-        props: { data: data },
-    };
-};
+import { useTracks } from "@/context";
 
 export const generateMetadata = async ({
     params,
@@ -42,12 +17,11 @@ export const generateMetadata = async ({
     };
 };
 
-export default function Home({ data }: { data: MusicTrackList }) {
-    console.log(extname(data[0].music_file));
-
+export default function Home() {
+    const data = useTracks();
     return (
         <main>
-            <TopNavBar tracks={data} />
+            <TopNavBar />
             <section className="flex justify-center">
                 <div
                 // style={{ maxWidth: "60%" }}
